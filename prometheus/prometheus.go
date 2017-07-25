@@ -241,7 +241,7 @@ func prometheusUrl(config map[string]ctypes.ConfigValue) (*url.URL, error) {
 		prefix = "https"
 	}
 
-	u, err := url.Parse(fmt.Sprintf("%s://%s:%d/metrics/job/%s", prefix, config["host"].(ctypes.ConfigValueStr).Value, config["port"].(ctypes.ConfigValueInt).Value, config["host"].(ctypes.ConfigValueStr).Value))
+	u, err := url.Parse(fmt.Sprintf("%s://%s:%d/metrics/job/%s", prefix, config["host"].(ctypes.ConfigValueStr).Value, config["port"].(ctypes.ConfigValueInt).Value, os.Hostname()))
 	if err != nil {
 		return nil, err
 	}
