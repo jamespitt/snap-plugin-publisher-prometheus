@@ -19,6 +19,8 @@ import (
 	"github.com/intelsdi-x/snap/control/plugin/cpolicy"
 	"github.com/intelsdi-x/snap/core"
 	"github.com/intelsdi-x/snap/core/ctypes"
+
+	valid "github.com/asaskevich/govalidator"
 )
 
 const (
@@ -151,8 +153,10 @@ func sendMetrics(config map[string]ctypes.ConfigValue, promUrl *url.URL, client 
 	buf := new(bytes.Buffer)
 	for _, m := range metrics {
 		name, tags, value, ts := mangleMetric(m)
-		buf.WriteString(prometheusString(name, tags, value, ts))
-		buf.WriteByte('\n')
+		if valid.IsNumeric(value) {
+			buf.WriteString(prometheusString(name, tags, value, ts))
+			buf.WriteByte('\n')
+		}
 	}
 
 	req, err := http.NewRequest("PUT", promUrl.String(), bytes.NewReader(buf.Bytes()))
@@ -174,11 +178,10 @@ func prometheusString(name string, tags map[string]string, value string, ts int6
 	for k, v := range tags {
 		tmp1 = append(tmp1, fmt.Sprintf("%s=\"%s\"", k, v))
 	}
-	return fmt.Sprintf("%s{%s} %s %d",
+	return fmt.Sprintf("%s{%s} %s",
 		name,
 		strings.Join(tmp1, ","),
 		value,
-		ts,
 	)
 }
 

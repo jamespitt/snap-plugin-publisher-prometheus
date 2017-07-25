@@ -26,8 +26,10 @@ imports:
   version: 32d9c273155a0506d27cf73dd1246e86a470997e
 - name: github.com/Sirupsen/logrus
   version: cd7d1bbe41066b6c1f19780f895901052150a575
-- name: golang.org/x/sys/unix
+- name: golang.org/x/sys
   version: 8d1157a435470616f975ff9bb013bea8d0962067
+  subpackages:
+  - unix
 - name: google.golang.org/grpc
   version: 42c095b6c9bdd80d4435b064508c398afdb0ec99
 - name: gopkg.in/yaml.v2
