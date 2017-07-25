@@ -15,17 +15,18 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 
+	valid "github.com/asaskevich/govalidator"
+
 	"github.com/intelsdi-x/snap/control/plugin"
 	"github.com/intelsdi-x/snap/control/plugin/cpolicy"
 	"github.com/intelsdi-x/snap/core"
 	"github.com/intelsdi-x/snap/core/ctypes"
 
-	valid "github.com/asaskevich/govalidator"
 )
 
 const (
 	name       = "prometheus"
-	version    = 1
+	version    = 2 
 	pluginType = plugin.PublisherPluginType
 	timeout    = 5
 )
@@ -240,7 +241,7 @@ func prometheusUrl(config map[string]ctypes.ConfigValue) (*url.URL, error) {
 		prefix = "https"
 	}
 
-	u, err := url.Parse(fmt.Sprintf("%s://%s:%d/metrics/job/unused", prefix, config["host"].(ctypes.ConfigValueStr).Value, config["port"].(ctypes.ConfigValueInt).Value))
+	u, err := url.Parse(fmt.Sprintf("%s://%s:%d/metrics/job/%s", prefix, config["host"].(ctypes.ConfigValueStr).Value, config["port"].(ctypes.ConfigValueInt).Value, config["host"].(ctypes.ConfigValueStr).Value))
 	if err != nil {
 		return nil, err
 	}
