@@ -12,6 +12,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+  "os"
 
 	log "github.com/Sirupsen/logrus"
 
@@ -154,7 +155,7 @@ func sendMetrics(config map[string]ctypes.ConfigValue, promUrl *url.URL, client 
 	buf := new(bytes.Buffer)
 	for _, m := range metrics {
 		name, tags, value, ts := mangleMetric(m)
-		if valid.IsNumeric(value) {
+		if valid.IsNumeric(value) && value != "" {
 			buf.WriteString(prometheusString(name, tags, value, ts))
 			buf.WriteByte('\n')
 		}
@@ -237,11 +238,14 @@ func mangleMetric(m plugin.MetricType) (name string, tags map[string]string, val
 
 func prometheusUrl(config map[string]ctypes.ConfigValue) (*url.URL, error) {
 	var prefix = "http"
+
+  hostname, err := os.Hostname()
+
 	if config["https"].(ctypes.ConfigValueBool).Value {
 		prefix = "https"
 	}
 
-	u, err := url.Parse(fmt.Sprintf("%s://%s:%d/metrics/job/%s", prefix, config["host"].(ctypes.ConfigValueStr).Value, config["port"].(ctypes.ConfigValueInt).Value, os.Hostname()))
+	u, err := url.Parse(fmt.Sprintf("%s://%s:%d/metrics/job/%s", prefix, config["host"].(ctypes.ConfigValueStr).Value, config["port"].(ctypes.ConfigValueInt).Value, hostname))
 	if err != nil {
 		return nil, err
 	}
